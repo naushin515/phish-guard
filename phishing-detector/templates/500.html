@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}500 — Server Error{% endblock %}
+{% block content %}
+<div class="container text-center py-5">
+  <div style="font-size:4rem; color:var(--neon-red); opacity:.4;">
+    <i class="bi bi-exclamation-octagon"></i>
+  </div>
+  <h2 class="fw-bold mt-3 text-neon-red">500 — Internal Server Error</h2>
+  <p class="text-secondary">Something went wrong on our end. Please try again.</p>
+  <a href="{{ url_for('index') }}" class="btn btn-analyze mt-2">
+    <i class="bi bi-house me-1"></i> Return Home
+  </a>
+</div>
+{% endblock %}

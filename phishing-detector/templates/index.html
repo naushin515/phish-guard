@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Scan URL{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <!-- ── Hero ── -->
+  <section class="hero-section">
+    <p class="section-label"><i class="bi bi-shield-exclamation me-1"></i>Threat Intelligence</p>
+    <h1 class="hero-title">
+      Detect <span class="text-neon-green">Phishing</span> URLs<br />
+      <span class="text-neon-blue">Before They Detect You</span>
+    </h1>
+    <p class="hero-subtitle">
+      Enter any URL below to run it through our multi-indicator phishing analysis engine.
+      Results include a risk score, classification, and actionable recommendations.
+    </p>
+  </section>
+
+  <!-- ── URL Scan Form ── -->
+  <div class="url-form-wrapper">
+    <p class="section-label mb-3">
+      <i class="bi bi-terminal me-1"></i> Enter a URL to analyze
+    </p>
+
+    <form id="analyzeForm" action="{{ url_for('analyze') }}" method="POST" novalidate>
+      <div class="input-group input-group-cyber mb-3">
+        <input
+          type="text"
+          id="urlInput"
+          name="url"
+          class="form-control"
+          placeholder="https://example.com or paste any suspicious URL…"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+          maxlength="2048"
+          required
+        />
+        <button class="btn btn-analyze" type="submit" id="analyzeBtn">
+          <span id="analyzeSpinner" class="spinner-neon d-none"></span>
+          <i class="bi bi-search me-1" id="analyzeBtnText"></i>
+          <span id="analyzeBtnText">Analyze URL</span>
+        </button>
+      </div>
+
+      <div class="text-xs text-muted d-flex align-items-center gap-2">
+        <i class="bi bi-info-circle"></i>
+        URL data is stored locally in your SQLite database for history tracking only.
+        No data is sent to external servers.
+      </div>
+    </form>
+  </div>
+
+  <!-- ── Stats Row ── -->
+  <div class="row g-3 mb-4" style="max-width:720px; margin: 0 auto;">
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-number text-neon-blue">{{ stats.total }}</div>
+        <div class="stat-label">Total Scans</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-number text-neon-green">{{ stats.safe_count }}</div>
+        <div class="stat-label">Safe</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-number text-neon-yellow">{{ stats.suspicious_count }}</div>
+        <div class="stat-label">Suspicious</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-number text-neon-red">{{ stats.phishing_count }}</div>
+        <div class="stat-label">Phishing</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Feature Highlights ── -->
+  <div class="row g-3 mb-5" style="max-width:720px; margin:0 auto;">
+    {% set features = [
+      ("bi-shield-check",    "neon-green",  "10 Indicators",      "IP check, length, subdomains, keywords, TLD, and more."),
+      ("bi-speedometer2",    "neon-blue",   "Risk Score 0–100",   "Quantified threat level with Safe / Suspicious / Phishing classification."),
+      ("bi-database-check",  "neon-yellow", "Scan History",       "All results persisted to SQLite for later review."),
+      ("bi-lightbulb",       "neon-red",    "Actionable Advice",  "Context-aware security recommendations for every scan."),
+    ] %}
+    {% for icon, color, title, desc in features %}
+    <div class="col-12 col-sm-6">
+      <div class="card-cyber p-3 d-flex gap-3 align-items-start h-100">
+        <i class="bi {{ icon }} text-{{ color }} fs-4 mt-1" style="flex-shrink:0;"></i>
+        <div>
+          <div class="fw-semibold" style="font-size:0.9rem;">{{ title }}</div>
+          <div class="text-secondary" style="font-size:0.8rem;">{{ desc }}</div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- ── Quick Example URLs ── -->
+  <div class="text-center mb-5">
+    <p class="section-label">Try these example URLs</p>
+    <div class="d-flex flex-wrap gap-2 justify-content-center">
+      {% set examples = [
+        "https://www.google.com",
+        "http://192.168.1.1/login/verify",
+        "http://paypal-secure-account-update.tk/login",
+        "https://bit.ly/3xample",
+      ] %}
+      {% for ex in examples %}
+      <button
+        type="button"
+        class="btn btn-sm"
+        style="background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);
+               color:var(--neon-blue);font-family:var(--font-mono);font-size:0.75rem;"
+        onclick="document.getElementById('urlInput').value='{{ ex }}'"
+      >{{ ex }}</button>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Show/hide spinner icon on the analyze button
+  document.getElementById('analyzeForm').addEventListener('submit', function() {
+    document.getElementById('analyzeSpinner').classList.remove('d-none');
+  });
+</script>
+{% endblock %}

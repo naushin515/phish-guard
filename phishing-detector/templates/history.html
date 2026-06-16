@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}Scan History{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- ── Page Header ── -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+      <p class="section-label mb-1"><i class="bi bi-clock-history me-1"></i>Database Records</p>
+      <h2 class="hero-title mb-0" style="font-size:1.8rem;">
+        Scan <span class="text-neon-blue">History</span>
+      </h2>
+    </div>
+    {% if scans %}
+    <form
+      action="{{ url_for('clear_history') }}"
+      method="POST"
+      data-confirm="Delete ALL {{ scans|length }} scan records? This cannot be undone."
+    >
+      <button type="submit"
+              class="btn btn-sm"
+              style="background:rgba(255,60,94,0.1);border:1px solid rgba(255,60,94,0.3);
+                     color:var(--neon-red);font-size:0.8rem;">
+        <i class="bi bi-trash me-1"></i>Clear All
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  <!-- ── Stats Row ── -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-sm-3">
+      <div class="stat-card">
+        <div class="stat-number text-neon-blue">{{ stats.total }}</div>
+        <div class="stat-label">Total Scans</div>
+      </div>
+    </div>
+    <div class="col-6 col-sm-3">
+      <div class="stat-card">
+        <div class="stat-number text-neon-green">{{ stats.safe_count }}</div>
+        <div class="stat-label">Safe</div>
+      </div>
+    </div>
+    <div class="col-6 col-sm-3">
+      <div class="stat-card">
+        <div class="stat-number text-neon-yellow">{{ stats.suspicious_count }}</div>
+        <div class="stat-label">Suspicious</div>
+      </div>
+    </div>
+    <div class="col-6 col-sm-3">
+      <div class="stat-card">
+        <div class="stat-number text-neon-red">{{ stats.phishing_count }}</div>
+        <div class="stat-label">Phishing</div>
+      </div>
+    </div>
+  </div>
+
+  {% if scans %}
+
+  <!-- ── Controls: search + filter ── -->
+  <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+    <!-- Search -->
+    <div style="flex:1;min-width:200px;max-width:360px;">
+      <div class="input-group">
+        <span class="input-group-text"
+              style="background:rgba(255,255,255,0.04);border-color:var(--border-color);">
+          <i class="bi bi-search text-muted" style="font-size:0.8rem;"></i>
+        </span>
+        <input
+          id="historySearch"
+          type="text"
+          class="form-control"
+          placeholder="Search URLs or status…"
+          style="background:rgba(255,255,255,0.04);border-color:var(--border-color);
+                 color:var(--text-primary);font-family:var(--font-mono);font-size:0.8rem;"
+        />
+      </div>
+    </div>
+
+    <!-- Status filter buttons -->
+    <div class="d-flex gap-2 flex-wrap">
+      <button data-filter="all" class="btn btn-sm active"
+              style="background:rgba(0,200,255,0.1);border:1px solid rgba(0,200,255,0.3);
+                     color:var(--neon-blue);font-size:0.75rem;font-family:var(--font-mono);">
+        All
+      </button>
+      <button data-filter="safe" class="btn btn-sm"
+              style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);
+                     color:var(--neon-green);font-size:0.75rem;font-family:var(--font-mono);">
+        Safe
+      </button>
+      <button data-filter="suspicious" class="btn btn-sm"
+              style="background:rgba(255,215,0,0.05);border:1px solid rgba(255,215,0,0.2);
+                     color:var(--neon-yellow);font-size:0.75rem;font-family:var(--font-mono);">
+        Suspicious
+      </button>
+      <button data-filter="phishing" class="btn btn-sm"
+              style="background:rgba(255,60,94,0.05);border:1px solid rgba(255,60,94,0.2);
+                     color:var(--neon-red);font-size:0.75rem;font-family:var(--font-mono);">
+        Phishing
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Table ── -->
+  <div class="card-cyber overflow-hidden mb-4">
+    <div class="table-responsive">
+      <table class="table table-cyber mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>URL</th>
+            <th>Status</th>
+            <th>Risk Score</th>
+            <th>Top Reason</th>
+            <th>Scanned</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="historyTableBody">
+          {% for scan in scans %}
+          <tr>
+            <td class="text-muted mono text-xs">{{ scan.id }}</td>
+
+            <!-- URL -->
+            <td>
+              <div class="url-cell" title="{{ scan.url }}">{{ scan.url }}</div>
+            </td>
+
+            <!-- Status badge -->
+            <td>
+              <span class="status-badge {{ scan.status | lower }}" data-status="{{ scan.status }}">
+                {% if scan.status == 'Phishing' %}
+                  <i class="bi bi-x-circle-fill"></i>
+                {% elif scan.status == 'Suspicious' %}
+                  <i class="bi bi-exclamation-circle-fill"></i>
+                {% else %}
+                  <i class="bi bi-check-circle-fill"></i>
+                {% endif %}
+                {{ scan.status }}
+              </span>
+            </td>
+
+            <!-- Risk score -->
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <span class="mono fw-bold
+                  {% if scan.status == 'Safe' %}text-neon-green
+                  {% elif scan.status == 'Suspicious' %}text-neon-yellow
+                  {% else %}text-neon-red{% endif %}"
+                  style="min-width:2.5rem;">
+                  {{ scan.risk_score }}%
+                </span>
+                <div class="risk-bar-track flex-grow-1" style="min-width:60px;">
+                  <div
+                    class="risk-bar-fill {{ scan.status | lower }}"
+                    data-width="{{ scan.risk_score }}"
+                    style="width:{{ scan.risk_score }}%;"
+                  ></div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Top reason -->
+            <td>
+              <span class="text-secondary" style="font-size:0.8rem;">
+                {{ scan.reasons[0] if scan.reasons else '—' }}
+              </span>
+            </td>
+
+            <!-- Timestamp -->
+            <td class="text-muted mono text-xs text-nowrap">
+              {{ scan.scanned_at }}
+            </td>
+
+            <!-- Delete -->
+            <td>
+              <form
+                action="{{ url_for('delete_record', scan_id=scan.id) }}"
+                method="POST"
+                data-confirm="Delete this scan record?"
+              >
+                <button
+                  type="submit"
+                  class="btn btn-sm p-1"
+                  style="background:transparent;border:none;color:var(--text-muted);"
+                  title="Delete record"
+                  data-bs-toggle="tooltip"
+                >
+                  <i class="bi bi-trash3" style="font-size:0.85rem;"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- ── Empty state ── -->
+  <div class="empty-state">
+    <div class="empty-state-icon"><i class="bi bi-database"></i></div>
+    <p class="fw-semibold" style="font-size:1rem;">No scans yet</p>
+    <p class="text-xs">Go scan a URL — results will appear here.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-analyze mt-2">
+      <i class="bi bi-search me-1"></i>Scan a URL
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

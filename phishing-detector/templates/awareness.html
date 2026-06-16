@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block title %}Cybersecurity Awareness{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:900px;">
+
+  <!-- ── Header ── -->
+  <section class="hero-section" style="padding-top:2rem;">
+    <p class="section-label"><i class="bi bi-book me-1"></i>Education Center</p>
+    <h1 class="hero-title">
+      Cyber<span class="text-neon-green">Security</span>
+      <span class="text-neon-blue">Awareness</span>
+    </h1>
+    <p class="hero-subtitle">
+      Understanding phishing attacks is your first line of defense.
+      Learn how attackers operate and how to stay safe online.
+    </p>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       Section 1 — What is Phishing?
+  ══════════════════════════════════════ -->
+  <div class="card-cyber p-4 mb-4">
+    <h3 class="fw-bold mb-3">
+      <span class="text-neon-blue me-2"><i class="bi bi-question-circle-fill"></i></span>
+      What is Phishing?
+    </h3>
+    <p class="text-secondary">
+      <strong class="text-primary">Phishing</strong> is a type of social engineering attack where
+      cybercriminals impersonate legitimate organisations — banks, social networks, government agencies,
+      or trusted companies — to trick victims into revealing sensitive information such as passwords,
+      credit card numbers, or personal data.
+    </p>
+    <p class="text-secondary mb-0">
+      The term comes from "fishing" — attackers cast a wide net and wait for victims to bite.
+      According to the FBI's Internet Crime Report, phishing is consistently one of the most
+      prevalent and costly cybercrime categories, costing businesses and individuals billions of
+      dollars annually.
+    </p>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       Section 2 — Common Techniques
+  ══════════════════════════════════════ -->
+  <div class="mb-4">
+    <h3 class="fw-bold mb-3">
+      <span class="text-neon-yellow me-2"><i class="bi bi-exclamation-triangle-fill"></i></span>
+      Common Phishing Techniques
+    </h3>
+    <div class="row g-3">
+      {% set techniques = [
+        ("bi-envelope-fill",       "neon-blue",    "Email Phishing (Spear Phishing)",
+         "Mass or targeted emails impersonating trusted brands with urgent calls to action, fake invoices, or account alerts."),
+        ("bi-phone-fill",          "neon-green",   "SMS Phishing (Smishing)",
+         "Fraudulent text messages with malicious links disguised as delivery notifications, bank alerts, or prize notifications."),
+        ("bi-telephone-fill",      "neon-yellow",  "Voice Phishing (Vishing)",
+         "Phone calls from fake tech support agents, IRS agents, or bank representatives demanding sensitive information."),
+        ("bi-globe",               "neon-red",     "Website Spoofing",
+         "Pixel-perfect clones of legitimate websites hosted on domains with slight misspellings or suspicious TLDs."),
+        ("bi-people-fill",         "neon-blue",    "Whaling",
+         "Highly targeted phishing aimed at C-level executives, often involving fake wire transfer requests or legal notices."),
+        ("bi-search-heart",        "neon-green",   "Search Engine Phishing",
+         "Malicious websites promoted through paid ads or SEO manipulation to appear in search results for trusted brands."),
+        ("bi-qr-code",             "neon-yellow",  "QR Code Phishing (Quishing)",
+         "Malicious QR codes placed on posters, emails, or physical locations that redirect to phishing pages."),
+        ("bi-share-fill",          "neon-red",     "Social Media Phishing",
+         "Fake profiles, DMs, or compromised accounts spreading malicious links through trusted social networks."),
+      ] %}
+      {% for icon, color, title, desc in techniques %}
+      <div class="col-12 col-sm-6">
+        <div class="awareness-card">
+          <div class="awareness-icon text-{{ color }}">
+            <i class="bi {{ icon }}"></i>
+          </div>
+          <h6 class="fw-bold mb-1">{{ title }}</h6>
+          <p class="text-secondary mb-0" style="font-size:0.85rem;">{{ desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       Section 3 — Identifying Phishing URLs
+  ══════════════════════════════════════ -->
+  <div class="card-cyber p-4 mb-4">
+    <h3 class="fw-bold mb-3">
+      <span class="text-neon-green me-2"><i class="bi bi-binoculars-fill"></i></span>
+      How to Identify Phishing Websites
+    </h3>
+    <p class="text-secondary mb-3">
+      Phishing sites are designed to look legitimate, but a careful look reveals telltale signs:
+    </p>
+    <div class="row g-3">
+      {% set signs = [
+        ("1", "Check the URL carefully", "Legitimate sites use their real domain. Look for misspellings like 'paypa1.com' or 'g00gle.com'. The real domain is the part immediately before the TLD (.com, .org)."),
+        ("2", "Look for HTTPS", "Legitimate sites use HTTPS. A missing padlock or HTTP-only connection is a red flag — especially for login or payment pages."),
+        ("3", "Suspicious subdomains", "Phishers hide their fake domain after legitimate-looking subdomains: 'paypal.com.evil-site.com' — the real domain is evil-site.com, not paypal.com."),
+        ("4", "Raw IP addresses", "No legitimate bank or e-commerce site uses a raw IP address (e.g., http://192.168.1.1/login). This is almost always malicious."),
+        ("5", "URL shorteners", "Shortened URLs (bit.ly, tinyurl) can hide the real destination. Expand them before clicking using a URL expander service."),
+        ("6", "Sense of urgency", "Phishing pages often create false urgency: 'Your account will be suspended in 24 hours.' Legitimate companies rarely demand immediate action via email."),
+        ("7", "Generic greetings", "Phishing emails often use 'Dear Customer' instead of your name. Targeted spear-phishing may include your name, so this is not a guarantee."),
+        ("8", "Poor spelling and grammar", "Many phishing pages are hastily assembled or translated, resulting in grammatical errors, odd capitalization, or inconsistent language."),
+      ] %}
+      {% for num, title, desc in signs %}
+      <div class="col-12 col-md-6">
+        <div class="d-flex gap-3 align-items-start">
+          <div class="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center
+                      mono fw-bold text-xs text-neon-blue"
+               style="width:28px;height:28px;background:rgba(0,200,255,0.1);
+                      border:1px solid rgba(0,200,255,0.2);margin-top:0.1rem;">
+            {{ num }}
+          </div>
+          <div>
+            <div class="fw-semibold mb-1" style="font-size:0.9rem;">{{ title }}</div>
+            <div class="text-secondary" style="font-size:0.82rem;">{{ desc }}</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       Section 4 — Best Practices
+  ══════════════════════════════════════ -->
+  <div class="mb-4">
+    <h3 class="fw-bold mb-3">
+      <span class="text-neon-red me-2"><i class="bi bi-shield-lock-fill"></i></span>
+      Best Practices for Staying Safe Online
+    </h3>
+    <div class="row g-3">
+      {% set practices = [
+        ("bi-key-fill",          "neon-green",  "Use a Password Manager",
+         "Use a reputable password manager to generate and store unique, strong passwords for every account. Never reuse passwords."),
+        ("bi-phone-vibrate",     "neon-blue",   "Enable Multi-Factor Authentication",
+         "MFA is the single most effective defense against account takeover, even if your credentials are phished."),
+        ("bi-arrow-clockwise",   "neon-yellow", "Keep Software Updated",
+         "Browser updates, OS patches, and antivirus definitions close known vulnerabilities exploited by phishing kits."),
+        ("bi-envelope-x",        "neon-red",    "Never Click Email Links",
+         "Navigate directly to websites by typing the URL in your browser. Never click links in unsolicited emails."),
+        ("bi-eye",               "neon-green",  "Verify Before You Trust",
+         "When in doubt, call the organisation directly using a phone number from their official website — not from the email."),
+        ("bi-cloud-check",       "neon-blue",   "Use Security DNS / Filtering",
+         "DNS-level filtering services (e.g., Cloudflare 1.1.1.1, Quad9) block known malicious domains before your browser connects."),
+        ("bi-book-half",         "neon-yellow", "Train Yourself Regularly",
+         "Phishing simulations and awareness training significantly reduce susceptibility. Platforms like KnowBe4 offer free resources."),
+        ("bi-flag-fill",         "neon-red",    "Report Suspected Phishing",
+         "Report phishing emails to your IT team and to anti-phishing initiatives like the APWG (reportphishing@apwg.org)."),
+      ] %}
+      {% for icon, color, title, desc in practices %}
+      <div class="col-12 col-sm-6">
+        <div class="awareness-card">
+          <div class="awareness-icon text-{{ color }}">
+            <i class="bi {{ icon }}"></i>
+          </div>
+          <h6 class="fw-bold mb-1">{{ title }}</h6>
+          <p class="text-secondary mb-0" style="font-size:0.85rem;">{{ desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       Section 5 — Quick Reference Stats
+  ══════════════════════════════════════ -->
+  <div class="card-cyber p-4 mb-5">
+    <h3 class="fw-bold mb-3">
+      <span class="text-neon-blue me-2"><i class="bi bi-bar-chart-fill"></i></span>
+      Phishing by the Numbers
+    </h3>
+    <div class="row g-3 text-center">
+      {% set stats_data = [
+        ("3.4B", "Phishing emails sent daily worldwide"),
+        ("36%",  "Of data breaches involve phishing"),
+        ("$4.9M","Average cost of a successful phishing attack"),
+        ("~60s",  "Average time before someone clicks a phishing link"),
+      ] %}
+      {% for value, label in stats_data %}
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded" style="background:rgba(0,200,255,0.05);border:1px solid var(--border-color);">
+          <div class="text-neon-blue fw-black mono" style="font-size:1.6rem;font-weight:800;">{{ value }}</div>
+          <div class="text-secondary" style="font-size:0.78rem;margin-top:0.25rem;">{{ label }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ── CTA ── -->
+  <div class="text-center mb-5">
+    <a href="{{ url_for('index') }}" class="btn btn-analyze">
+      <i class="bi bi-search me-1"></i> Scan a Suspicious URL Now
+    </a>
+  </div>
+
+</div>
+{% endblock %}
