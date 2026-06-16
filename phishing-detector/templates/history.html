@@ -13,18 +13,28 @@
       </h2>
     </div>
     {% if scans %}
-    <form
-      action="{{ url_for('clear_history') }}"
-      method="POST"
-      data-confirm="Delete ALL {{ scans|length }} scan records? This cannot be undone."
-    >
-      <button type="submit"
-              class="btn btn-sm"
-              style="background:rgba(255,60,94,0.1);border:1px solid rgba(255,60,94,0.3);
-                     color:var(--neon-red);font-size:0.8rem;">
-        <i class="bi bi-trash me-1"></i>Clear All
-      </button>
-    </form>
+    <div class="d-flex flex-wrap gap-2">
+      <!-- Download CSV -->
+      <a href="{{ url_for('export_csv') }}"
+         class="btn btn-sm"
+         style="background:rgba(0,200,255,0.1);border:1px solid rgba(0,200,255,0.3);
+                color:var(--neon-blue);font-size:0.8rem;">
+        <i class="bi bi-download me-1"></i>Download CSV
+      </a>
+      <!-- Clear All -->
+      <form
+        action="{{ url_for('clear_history') }}"
+        method="POST"
+        data-confirm="Delete ALL {{ scans|length }} scan records? This cannot be undone."
+      >
+        <button type="submit"
+                class="btn btn-sm"
+                style="background:rgba(255,60,94,0.1);border:1px solid rgba(255,60,94,0.3);
+                       color:var(--neon-red);font-size:0.8rem;">
+          <i class="bi bi-trash me-1"></i>Clear All
+        </button>
+      </form>
+    </div>
     {% endif %}
   </div>
 

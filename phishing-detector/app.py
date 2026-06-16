@@ -9,10 +9,13 @@ Routes:
     POST /clear       - Clear all scan history
     POST /delete/<id> - Delete a single scan record
     GET  /api/stats   - JSON endpoint for dashboard statistics
+    GET  /export/csv  - Download all scan history as a CSV file
 """
 
+import csv
+import io
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Response
 
 from analyzer import analyze_url
 from database import init_db, save_scan, get_all_scans, get_scan_stats, delete_scan, clear_all_scans
@@ -107,6 +110,42 @@ def delete_record(scan_id):
     else:
         flash("Record not found.", "warning")
     return redirect(url_for("history"))
+
+
+@app.route("/export/csv")
+def export_csv():
+    """
+    Stream all scan history records as a downloadable CSV file.
+    Columns: URL, Risk Score, Classification, Scan Date and Time.
+    """
+    scans = get_all_scans()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Header row
+    writer.writerow(["URL", "Risk Score", "Classification", "Scan Date and Time"])
+
+    # Data rows
+    for scan in scans:
+        writer.writerow([
+            scan["url"],
+            scan["risk_score"],
+            scan["status"],
+            scan["scanned_at"],
+        ])
+
+    csv_content = output.getvalue()
+    output.close()
+
+    return Response(
+        csv_content,
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=phishguard_scan_history.csv",
+            "Content-Type": "text/csv; charset=utf-8",
+        },
+    )
 
 
 @app.route("/api/stats")
